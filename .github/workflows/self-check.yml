@@ -1,0 +1,26 @@
+name: Self-check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  self-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install
+        run: pip install -e .
+
+      # Run envsanity on its own source code. The test fixtures intentionally
+      # contain undocumented variables, so they are excluded.
+      - name: Run envsanity on itself
+        run: envsanity . --exclude "tests/**" --format github
